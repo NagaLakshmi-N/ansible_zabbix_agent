@@ -1,0 +1,43 @@
+---
+# Tasks specific for Windows systems
+
+- name: "Create Cache Folder"
+  win_file: path="C:\cache"  state=directory
+  
+- name: Set Architecture if 64-bit
+  set_fact:
+    architecture: 'win64'
+  when: ansible_architecture == "64-bit"
+
+- name: Set Architecture if 32-bit
+  set_fact:
+    architecture: 'win32'
+  when: ansible_architecture == "32-bit"
+
+- name: Download Zabbix Agent to C:\\cache
+  win_get_url:
+    url: "http://www.zabbix.com/downloads/3.0.0/{{ agent_file_windows }}.zip"
+    dest: "C:\\cache\\{{ agent_install_zipfile_windows }}"
+    force: yes
+  tags:
+    - zabbix-agent
+    - init
+  
+- debug: msg="Arch {{ architecture }}"
+
+- script:  scripts/close_process.ps1 "zabbix_agentd"
+
+- name: "Extract Zip"
+  script:  extract_zip.ps1 "C:\cache\{{ agent_install_zipfile_windows }}" "{{ agent_install_dir_windows }}"
+  
+- name: "Create Configuration File"
+  win_template:
+    src: zabbix_agentd_windows.conf.j2
+    dest: "{{ agent_install_dir_windows }}\\conf\\zabbix_agentd.win.conf"
+
+- name: "Install Zabbix Agent"
+  script:  scripts/install_package.ps1 "Zabbix Agent" "{{ agent_install_dir_windows }}\\bin\\{{ architecture }}\\zabbix_agentd.exe" "{{ agent_install_dir_windows }}\\conf\\zabbix_agentd.win.conf" "zabbix_agentd"
+
+- name: "Start Zabbix Agent"
+  script:  scripts/start_package.ps1 "{{ agent_install_dir_windows }}\\bin\\{{ architecture }}\\zabbix_agentd.exe" "{{ agent_install_dir_windows }}\\conf\\zabbix_agentd.win.conf"
+

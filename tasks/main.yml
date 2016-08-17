@@ -1,0 +1,52 @@
+---
+# tasks file for wdijkerman.zabbix
+
+- debug: msg="Zabbix Repo {{ zabbix_version }}"
+
+- name: "Include OS-specific variables"
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: "Install the correct repository"
+  include: "RedHat.yml"
+  when: ansible_os_family == "RedHat"
+  tags:
+    - zabbix-agent
+    - init
+    - config
+    - service
+
+- name: "Install the correct repository"
+  include: "Debian.yml"
+  when: ansible_os_family == "Debian"
+  tags:
+    - zabbix-agent
+    - init
+    - config
+    - service
+
+- name: "Install the correct repository"
+  include: "Suse.yml"
+  when: ansible_os_family == "Suse"
+  tags:
+    - zabbix-agent
+    - init
+    - config
+    - service
+    
+- name: "Install the correct repository"
+  include: "Windows.yml"
+  when: ansible_os_family == "Windows"
+  tags:
+    - zabbix-agent
+    - init
+    - config
+    - service
+
+- name: "Configure zabbix-agent"
+  include: "configure_agent_linux.yml"
+  when: ansible_os_family == "RedHat" or ansible_os_family == "Debian" or ansible_os_family == "Suse" 
+  tags:
+    - zabbix-agent
+    - init
+    - config
+    - service

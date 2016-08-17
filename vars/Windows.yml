@@ -1,0 +1,5 @@
+---
+# vars file for zabbix-agent (Windows)
+
+zabbix_agent: zabbix_agentd
+zabbix_agent_service: zabbix_agentd

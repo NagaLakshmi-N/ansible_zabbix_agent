@@ -1,0 +1,31 @@
+- name: "Configure zabbix-agent"
+  template: src=zabbix_agentd.conf.j2
+            dest=/etc/zabbix/zabbix_agentd.conf
+            owner=root
+            group=root
+            mode=0644
+  notify: restart zabbix-agent
+  become: yes
+  tags:
+    - zabbix-agent
+    - config
+    - init
+
+- name: "Create include dir zabbix-agent"
+  file: path={{ agent_include }}
+        owner=root
+        group=root
+        state=directory
+  become: yes
+  tags:
+    - config
+    - include
+
+- name: "Make sure the zabbix-agent service is running"
+  service: name=zabbix-agent
+           state=started
+           enabled=yes
+  become: yes
+  tags:
+    - init
+    - service
