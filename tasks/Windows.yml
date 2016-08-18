@@ -22,13 +22,11 @@
   tags:
     - zabbix-agent
     - init
-  
-- debug: msg="Arch {{ architecture }}"
 
 - script:  scripts/close_process.ps1 "zabbix_agentd"
 
 - name: "Extract Zip"
-  script:  extract_zip.ps1 "C:\cache\{{ agent_install_zipfile_windows }}" "{{ agent_install_dir_windows }}"
+  script:  scripts/extract_zip.ps1 "C:\cache\{{ agent_install_zipfile_windows }}" "{{ agent_install_dir_windows }}"
   
 - name: "Create Configuration File"
   win_template:
