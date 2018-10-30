@@ -4,7 +4,7 @@
 - debug: msg="Zabbix Repo {{ zabbix_version }}"
 
 - name: "Include OS-specific variables"
-  include_vars: "{{ ansible_os_family }}.yml"
+  include_vars: "vars/{{ ansible_os_family }}.yml"
 
 - name: "Install the correct repository"
   include: "RedHat.yml"
