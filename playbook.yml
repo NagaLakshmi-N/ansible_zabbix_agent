@@ -20,3 +20,5 @@
       when: ansible_os_family == "Debian"
   tasks:
     - include: tasks/main.yml
+  handlers:
+    - include: handlers/main.yml
